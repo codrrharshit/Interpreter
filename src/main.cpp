@@ -29,6 +29,7 @@ int main(int argc, char *argv[]) {
         // Uncomment this block to pass the first stage
         // 
         if (!file_contents.empty()) {
+            bool haderror = false ;
             for(auto ch : file_contents){
                 switch (ch) {
                     case '(': 
@@ -65,12 +66,13 @@ int main(int argc, char *argv[]) {
                         break;
 
                     default:
-                        
+                        cerr<<"[line 1] Error: Unexpected character: "<< ch<<endl;
+                        haderror=true;
                         break;
                 }
             }
             std::cout << "EOF  null" << std::endl;
-            return 0;
+            return haderror ? 65 : 0;
         }
         std::cout << "EOF  null" << std::endl;
         
