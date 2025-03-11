@@ -30,44 +30,35 @@ int main(int argc, char *argv[]) {
         // 
         if (!file_contents.empty()) {
             bool haderror = false ;
-            for(auto ch : file_contents){
+            for (int  i = 0; i < file_contents.length(); i++) {
+                char ch = file_contents[i];
+        
                 switch (ch) {
-                    case '(': 
-                        cout << "LEFT_PAREN ( null" << endl;
-                        break;
+                    case '(': cout << "LEFT_PAREN ( null" << endl; break;
+                    case ')': cout << "RIGHT_PAREN ) null" << endl; break;
+                    case '{': cout << "LEFT_BRACE { null" << endl; break;
+                    case '}': cout << "RIGHT_BRACE } null" << endl; break;
+                    case ',': cout << "COMMA , null" << endl; break;
+                    case '.': cout << "DOT . null" << endl; break;
+                    case '-': cout << "MINUS - null" << endl; break;
+                    case '+': cout << "PLUS + null" << endl; break;
+                    case ';': cout << "SEMICOLON ; null" << endl; break;
+                    case '*': cout << "STAR * null" << endl; break;
+                    //case '\n': line++; break; // Increment line number on newline
                     
-                    case ')': 
-                        cout << "RIGHT_PAREN ) null" << endl;
+                    // Handling `=` and `==`
+                    case '=':
+                        if (i + 1 < file_contents.length() && file_contents[i + 1] == '=') {
+                            cout << "EQUAL_EQUAL == null" << endl;
+                            i++; // Skip next character since we already consumed it
+                        } else {
+                            cout << "EQUAL = null" << endl;
+                        }
                         break;
-                    case '{':
-                        cout<<"LEFT_BRACE { null"<<endl;
-                        break;
-
-                    case '}':
-                        cout<<"RIGHT_BRACE } null"<<endl;
-                        break;
-                    case ',': 
-                        cout << "COMMA , null" << endl;
-                        break;
-                    case '.': 
-                        cout << "DOT . null" << endl;
-                        break;
-                    case '-': 
-                        cout << "MINUS - null" << endl;
-                        break;
-                    case '+': 
-                        cout << "PLUS + null" << endl;
-                        break;
-                    case ';': 
-                        cout << "SEMICOLON ; null" << endl;
-                        break;
-                    case '*': 
-                        cout << "STAR * null" << endl;
-                        break;
-
+        
                     default:
-                        cerr<<"[line 1] Error: Unexpected character: "<< ch<<endl;
-                        haderror=true;
+                        cerr << "[line 1] Error: Unexpected character: " << ch << endl;
+                        haderror = true;
                         break;
                 }
             }
