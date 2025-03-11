@@ -45,6 +45,24 @@ int main(int argc, char *argv[]) {
                     case '}':
                         cout<<"RIGHT_BRACE } null"<<endl;
                         break;
+                    case ',': 
+                        cout << "COMMA , null" << endl;
+                        break;
+                    case '.': 
+                        cout << "DOT . null" << endl;
+                        break;
+                    case '-': 
+                        cout << "MINUS - null" << endl;
+                        break;
+                    case '+': 
+                        cout << "PLUS + null" << endl;
+                        break;
+                    case ';': 
+                        cout << "SEMICOLON ; null" << endl;
+                        break;
+                    case '*': 
+                        cout << "STAR * null" << endl;
+                        break;
 
                     default:
                         
