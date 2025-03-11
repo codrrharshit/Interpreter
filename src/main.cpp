@@ -40,12 +40,14 @@ int main(int argc, char *argv[]) {
                         break;
 
                     default:
+                        
                         break;
                 }
             }
-            return 1;
+            std::cout << "EOF  null" << std::endl;
+            return 0;
         }
-        std::cout << "EOF  null" << std::endl; // Placeholder, remove this line when implementing the scanner
+        std::cout << "EOF  null" << std::endl;
         
     } else {
         std::cerr << "Unknown command: " << command << std::endl;
