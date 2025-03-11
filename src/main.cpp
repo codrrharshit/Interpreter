@@ -56,6 +56,16 @@ int main(int argc, char *argv[]) {
                         }
                         break;
         
+                    case '!':
+                        if(i+1<file_contents.length() && file_contents[i+1]=='='){
+                            cout<<"BANG_EQUAL != null"<<endl;
+                            i++;
+                            break;
+                        }
+                        else {
+                            cout<<"BANG ! null"<<endl;
+                            break;
+                        }
                     default:
                         cerr << "[line 1] Error: Unexpected character: " << ch << endl;
                         haderror = true;
