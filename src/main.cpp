@@ -94,13 +94,18 @@ int main(int argc, char *argv[]) {
 
                     case '/':
                         if(i+1<file_contents.length() && file_contents[i+1]=='/'){
-                            i=file_contents.length();
-                            break;
+                            i++;
+                            // we have to skip everything 
+                           while(i<file_contents.length() && file_contents[i]!='\n'){
+                                i++;
+                           }
+                           line++;
                         }
                         else {
                             cout<<"SLASH / null"<<endl;
-                            break;
+                            
                         }
+                        break;
 
                     case ' ': break;
                     case '\t':break;
