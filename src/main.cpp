@@ -112,6 +112,29 @@ int main(int argc, char *argv[]) {
                     case '\n':
                         line++;
                         break;
+
+                    // scanning the string literal 
+                    case '"':{
+                        string s="";
+                        i++;
+                        while(i<file_contents.length() && file_contents[i]!='"'){
+                            if(file_contents[i]=='\n'){
+                                line++;
+                            }
+                            s.push_back(file_contents[i]);
+                            i++;
+                        }
+
+                        if(i>=file_contents.length()){
+                            haderror=true;
+                            cerr << "[line " << line << "] Error: Unterminated string." << endl;
+                            break;
+                        }
+
+                        cout << "STRING \"" << s << "\" " << s << endl;
+                        break;
+                    }
+                        
                     default:
                         cerr << "[line "<<line <<"] Error: Unexpected character: " << ch << endl;
                         haderror = true;
