@@ -88,6 +88,16 @@ int main(int argc, char *argv[]) {
                             cout<<"GREATER > null"<<endl;
                             break;
                         }
+
+                    case '/':
+                        if(i+1<file_contents.length() && file_contents[i+1]=='/'){
+                            i=file_contents.length();
+                            break;
+                        }
+                        else {
+                            cout<<"SLASH / null"<<endl;
+                            break;
+                        }
                     default:
                         cerr << "[line 1] Error: Unexpected character: " << ch << endl;
                         haderror = true;
