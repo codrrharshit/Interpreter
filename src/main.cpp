@@ -25,11 +25,14 @@ int main(int argc, char *argv[]) {
 
     if (command == "tokenize") {
         std::string file_contents = read_file_contents(argv[2]);
+
+        bool haderror=false ;
+        int line=1;
         
         // Uncomment this block to pass the first stage
         // 
         if (!file_contents.empty()) {
-            bool haderror = false ;
+
             for (int  i = 0; i < file_contents.length(); i++) {
                 char ch = file_contents[i];
         
@@ -98,8 +101,14 @@ int main(int argc, char *argv[]) {
                             cout<<"SLASH / null"<<endl;
                             break;
                         }
+
+                    case ' ': break;
+                    case '\t':break;
+                    case '\n':
+                        line++;
+                        break;
                     default:
-                        cerr << "[line 1] Error: Unexpected character: " << ch << endl;
+                        cerr << "[line "<<line <<"] Error: Unexpected character: " << ch << endl;
                         haderror = true;
                         break;
                 }
