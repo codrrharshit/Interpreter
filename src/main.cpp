@@ -5,9 +5,10 @@
 #include <string>
 #include <iomanip>
 #include <unordered_set>
+#include <algorithm>
 using namespace std;
 
-unordered_set<string> keywords={"if","else","while","return","int","float","void"};
+unordered_set<string> keywords={"and","class","else","false","for","fun","if","nil","or","print","return","super","this","true","var","while"};
 // function for scanning identifiers 
 
 void  scannedIdentifier(string &input, int &i){
@@ -22,7 +23,9 @@ void  scannedIdentifier(string &input, int &i){
         }
 
         if(keywords.find(identifier)!=keywords.end()){
-            cout << "KEYWORD " << identifier << " null" << endl;
+            string keyword=identifier;
+            transform(keyword.begin(),keyword.end(),keyword.begin(),::toupper);
+            cout << keyword <<" "<< identifier << " null" << endl;
         }
         else {
             cout << "IDENTIFIER " << identifier << " null" << endl;
