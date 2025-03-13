@@ -3,6 +3,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <iomanip>
 
 using namespace std;
 
@@ -132,6 +133,45 @@ int main(int argc, char *argv[]) {
                         }
 
                         cout << "STRING \"" << s << "\" " << s << endl;
+                        break;
+                    }
+
+                    case '0': case '1': case '2': case '3': case '4':
+                    case '5': case '6': case '7': case '8': case '9': {
+                        string num;
+                        size_t start = i;
+                        bool hasDecimal = false;
+        
+                        while (i < file_contents.length() && (isdigit(file_contents[i]) || file_contents[i] == '.')) {
+                            if (file_contents[i] == '.') {
+                                if (hasDecimal) break; // Prevent multiple decimal points
+                                hasDecimal = true;
+                            }
+                            num += file_contents[i];
+                            i++;
+                        }
+                        i--; // Roll back one step as loop overshoots
+        
+                        cout << "NUMBER " << num << " ";
+                        bool isInteger = true;
+                        if (hasDecimal) {
+                            size_t decimalPos = num.find('.');
+                            string decimalPart = num.substr(decimalPos + 1);
+                            for (char c : decimalPart) {
+                                if (c != '0') {
+                                    isInteger = false;
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (isInteger) {
+                            // Print as an integer
+                            cout << stoi(num) <<".0"<< endl;
+                        } else {
+                            // Print as a floating-point number with the original precision
+                            cout << stod(num) << endl;
+                        }
                         break;
                     }
                         
