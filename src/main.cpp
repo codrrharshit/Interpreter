@@ -4,8 +4,34 @@
 #include <sstream>
 #include <string>
 #include <iomanip>
-
+#include <unordered_set>
 using namespace std;
+
+unordered_set<string> keywords={"if","else","while","return","int","float","void"};
+// function for scanning identifiers 
+
+void  scannedIdentifier(string &input, int &i){
+    string identifier="";
+    // check for the initials
+    if(isalpha(input[i] )||input[i]=='_' ){
+        identifier+=input[i];
+        i++;
+        while(i<input.length() && (isalnum(input[i])|| input[i]=='_')){
+            identifier+=input[i];
+            i++;
+        }
+
+        if(keywords.find(identifier)!=keywords.end()){
+            cout << "KEYWORD " << identifier << " null" << endl;
+        }
+        else {
+            cout << "IDENTIFIER " << identifier << " null" << endl;
+        }
+
+    }
+    i--;
+}
+
 
 std::string read_file_contents(const std::string& filename);
 
@@ -174,10 +200,18 @@ int main(int argc, char *argv[]) {
                         }
                         break;
                     }
+
+
                         
                     default:
-                        cerr << "[line "<<line <<"] Error: Unexpected character: " << ch << endl;
-                        haderror = true;
+                        if(isalpha(ch)|| ch=='_'){
+                            scannedIdentifier(file_contents,i);   
+                        }
+                        else {
+                            cerr << "[line "<<line <<"] Error: Unexpected character: " << ch << endl;
+                            haderror = true;
+                             
+                        }
                         break;
                 }
             }
