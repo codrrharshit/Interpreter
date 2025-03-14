@@ -23,7 +23,7 @@ class LiteralExpr : public Expr {
         std::string toString() const override {
             if (std::holds_alternative<double>(value)) {
                 std::ostringstream out;
-                out << std::fixed << std::setprecision(6) << std::get<double>(value);
+                out << std::fixed << std::setprecision(3) << std::get<double>(value);
                 std::string str = out.str();
                 
                 // Remove trailing zeros

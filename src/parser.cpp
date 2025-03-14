@@ -40,9 +40,21 @@ std::unique_ptr<Expr> Parser::parseProgram() {
 }
 
 std::unique_ptr<Expr> Parser::parseExpression() {
-    return parseComparison();  // Start from lowest precedence level
+    return parseEquality();  // Start from lowest precedence level
 
 
+}
+
+std::unique_ptr<Expr> Parser::parseEquality() {
+    auto expr = parseComparison();  // Parse left-hand side first
+
+    while (match(TokenType::EQUAL_EQUAL) || match(TokenType::BANG_EQUAL)) {
+        std::string op = tokens[current - 1].lexeme;
+        auto right = parseComparison();
+        expr = std::make_unique<BinaryExpr>(std::move(expr), op, std::move(right));
+    }
+
+    return expr;
 }
 
 std::unique_ptr<Expr> Parser::parseComparison() {

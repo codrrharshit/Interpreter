@@ -26,6 +26,7 @@ public:
     std::unique_ptr<Expr> parseUnary();    
     std::unique_ptr<Expr> parsePrimary();
     std::unique_ptr<Expr> parseComparison();
+    std::unique_ptr<Expr> parseEquality();
 };
 
 #endif // PARSER_H
