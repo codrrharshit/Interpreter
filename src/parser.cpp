@@ -57,7 +57,16 @@ std::unique_ptr<Expr> Parser::parseFactor() {
     if (match(TokenType::NUMBER)) {
         return std::make_unique<LiteralExpr>(tokens[current - 1].literal);
     } else if (match(TokenType::STRING)) {
-        return std::make_unique<LiteralExpr>("\"" + tokens[current - 1].lexeme + "\"");
+       
+            std::string rawString = tokens[current - 1].lexeme;
+            
+            // Remove surrounding quotes if they exist
+            if (rawString.front() == '"' && rawString.back() == '"') {
+                rawString = rawString.substr(1, rawString.length() - 2);
+            }
+        
+            return std::make_unique<LiteralExpr>(rawString);
+        
     } else if (match(TokenType::KEYWORD)) {
         if (tokens[current - 1].lexeme == "true") {
             return std::make_unique<LiteralExpr>("true");
