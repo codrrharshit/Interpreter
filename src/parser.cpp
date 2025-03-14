@@ -54,6 +54,11 @@ std::unique_ptr<Expr> Parser::parseTerm() {
 }
 
 std::unique_ptr<Expr> Parser::parseFactor() {
+    if (match(TokenType::MINUS) || match(TokenType::BANG)) {  
+        Token op = tokens[current - 1];  
+        auto right = parseFactor();  
+        return std::make_unique<UnaryExpr>(op, std::move(right));
+    }
     if (match(TokenType::NUMBER)) {
         return std::make_unique<LiteralExpr>(tokens[current - 1].literal);
     } else if (match(TokenType::STRING)) {

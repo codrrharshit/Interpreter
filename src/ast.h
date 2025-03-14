@@ -52,4 +52,18 @@ class GroupingExpr : public Expr {
     };
     
 
+class UnaryExpr : public Expr {
+        public:
+            Token op;
+            std::unique_ptr<Expr> right;
+        
+            UnaryExpr(Token op, std::unique_ptr<Expr> expr)
+                : op(op), right(std::move(expr)) {}
+        
+            std::string toString() const override {
+                return "(" + op.lexeme + " " + right->toString() + ")";
+            }
+        };
+        
+
 #endif // AST_H
