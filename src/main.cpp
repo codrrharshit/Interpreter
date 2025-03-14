@@ -1,38 +1,43 @@
-#include <cstring>
+#include "tokeniser.h"
+#include "parser.h"
 #include <fstream>
 #include <iostream>
 #include <sstream>
-#include <string>
-#include <iomanip>
-#include <unordered_set>
-#include <algorithm>
+
+
+
 using namespace std;
 
-unordered_set<string> keywords={"and","class","else","false","for","fun","if","nil","or","print","return","super","this","true","var","while"};
-// function for scanning identifiers 
-
-void  scannedIdentifier(string &input, int &i){
-    string identifier="";
-    // check for the initials
-    if(isalpha(input[i] )||input[i]=='_' ){
-        identifier+=input[i];
-        i++;
-        while(i<input.length() && (isalnum(input[i])|| input[i]=='_')){
-            identifier+=input[i];
-            i++;
-        }
-
-        if(keywords.find(identifier)!=keywords.end()){
-            string keyword=identifier;
-            transform(keyword.begin(),keyword.end(),keyword.begin(),::toupper);
-            cout << keyword <<" "<< identifier << " null" << endl;
-        }
-        else {
-            cout << "IDENTIFIER " << identifier << " null" << endl;
-        }
-
+std::ostream& operator<<(std::ostream& os, const TokenType& type) {
+    switch (type) {
+        case TokenType::IDENTIFIER: os << "IDENTIFIER"; break;
+        case TokenType::KEYWORD: os << "KEYWORD"; break;
+        case TokenType::NUMBER: os << "NUMBER"; break;
+        case TokenType::STRING: os << "STRING"; break;
+        case TokenType::EOF_TOKEN: os << "EOF"; break;
+        case TokenType::LEFT_PAREN: os << "LEFT_PAREN"; break;
+        case TokenType::RIGHT_PAREN: os << "RIGHT_PAREN"; break;
+        case TokenType::LEFT_BRACE: os << "LEFT_BRACE"; break;
+        case TokenType::RIGHT_BRACE: os << "RIGHT_BRACE"; break;
+        case TokenType::COMMA: os << "COMMA"; break;
+        case TokenType::DOT: os << "DOT"; break;
+        case TokenType::MINUS: os << "MINUS"; break;
+        case TokenType::PLUS: os << "PLUS"; break;
+        case TokenType::SEMICOLON: os << "SEMICOLON"; break;
+        case TokenType::STAR: os << "STAR"; break;
+        case TokenType::SLASH: os << "SLASH"; break;
+        case TokenType::EQUAL: os << "EQUAL"; break;
+        case TokenType::EQUAL_EQUAL: os << "EQUAL_EQUAL"; break;
+        case TokenType::BANG: os << "BANG"; break;
+        case TokenType::BANG_EQUAL: os << "BANG_EQUAL"; break;
+        case TokenType::LESS: os << "LESS"; break;
+        case TokenType::LESS_EQUAL: os << "LESS_EQUAL"; break;
+        case TokenType::GREATER: os << "GREATER"; break;
+        case TokenType::GREATER_EQUAL: os << "GREATER_EQUAL"; break;
+        // Add cases for all TokenType values
+        default: os << "UNKNOWN"; break;
     }
-    i--;
+    return os;
 }
 
 
@@ -52,183 +57,39 @@ int main(int argc, char *argv[]) {
     }
 
     const std::string command = argv[1];
-
+    vector<Token>tokens ;
+    int result ;
+    string file_contents = read_file_contents(argv[2]);
+    result= tokenize(file_contents,tokens);
     if (command == "tokenize") {
-        std::string file_contents = read_file_contents(argv[2]);
-
-        bool haderror=false ;
-        int line=1;
         
-        // Uncomment this block to pass the first stage
-        // 
-        if (!file_contents.empty()) {
-
-            for (int  i = 0; i < file_contents.length(); i++) {
-                char ch = file_contents[i];
-        
-                switch (ch) {
-                    case '(': cout << "LEFT_PAREN ( null" << endl; break;
-                    case ')': cout << "RIGHT_PAREN ) null" << endl; break;
-                    case '{': cout << "LEFT_BRACE { null" << endl; break;
-                    case '}': cout << "RIGHT_BRACE } null" << endl; break;
-                    case ',': cout << "COMMA , null" << endl; break;
-                    case '.': cout << "DOT . null" << endl; break;
-                    case '-': cout << "MINUS - null" << endl; break;
-                    case '+': cout << "PLUS + null" << endl; break;
-                    case ';': cout << "SEMICOLON ; null" << endl; break;
-                    case '*': cout << "STAR * null" << endl; break;
-                    //case '\n': line++; break; // Increment line number on newline
-                    
-                    // Handling `=` and `==`
-                    case '=':
-                        if (i + 1 < file_contents.length() && file_contents[i + 1] == '=') {
-                            cout << "EQUAL_EQUAL == null" << endl;
-                            i++; // Skip next character since we already consumed it
-                        } else {
-                            cout << "EQUAL = null" << endl;
-                        }
-                        break;
-        
-                    case '!':
-                        if(i+1<file_contents.length() && file_contents[i+1]=='='){
-                            cout<<"BANG_EQUAL != null"<<endl;
-                            i++;
-                            break;
-                        }
-                        else {
-                            cout<<"BANG ! null"<<endl;
-                            break;
-                        }
-
-                    case '<':
-                        if(i+1<file_contents.length() && file_contents[i+1]=='='){
-                            cout<<"LESS_EQUAL <= null"<<endl;
-                            i++;
-                            break;
-                        }
-                        else {
-                            cout<<"LESS < null"<<endl;
-                            break;
-                        }
-
-                    case '>':
-                        if(i+1<file_contents.length() && file_contents[i+1]=='='){
-                            cout<<"GREATER_EQUAL >= null"<<endl;
-                            i++;
-                            break;
-                        }
-                        else {
-                            cout<<"GREATER > null"<<endl;
-                            break;
-                        }
-
-                    case '/':
-                        if(i+1<file_contents.length() && file_contents[i+1]=='/'){
-                            i++;
-                            // we have to skip everything 
-                           while(i<file_contents.length() && file_contents[i]!='\n'){
-                                i++;
-                           }
-                           line++;
-                        }
-                        else {
-                            cout<<"SLASH / null"<<endl;
-                            
-                        }
-                        break;
-
-                    case ' ': break;
-                    case '\t':break;
-                    case '\n':
-                        line++;
-                        break;
-
-                    // scanning the string literal 
-                    case '"':{
-                        string s="";
-                        i++;
-                        while(i<file_contents.length() && file_contents[i]!='"'){
-                            if(file_contents[i]=='\n'){
-                                line++;
-                            }
-                            s.push_back(file_contents[i]);
-                            i++;
-                        }
-
-                        if(i>=file_contents.length()){
-                            haderror=true;
-                            cerr << "[line " << line << "] Error: Unterminated string." << endl;
-                            break;
-                        }
-
-                        cout << "STRING \"" << s << "\" " << s << endl;
-                        break;
-                    }
-
-                    case '0': case '1': case '2': case '3': case '4':
-                    case '5': case '6': case '7': case '8': case '9': {
-                        string num;
-                        size_t start = i;
-                        bool hasDecimal = false;
-        
-                        while (i < file_contents.length() && (isdigit(file_contents[i]) || file_contents[i] == '.')) {
-                            if (file_contents[i] == '.') {
-                                if (hasDecimal) break; // Prevent multiple decimal points
-                                hasDecimal = true;
-                            }
-                            num += file_contents[i];
-                            i++;
-                        }
-                        i--; // Roll back one step as loop overshoots
-        
-                        cout << "NUMBER " << num << " ";
-                        bool isInteger = true;
-                        if (hasDecimal) {
-                            size_t decimalPos = num.find('.');
-                            string decimalPart = num.substr(decimalPos + 1);
-                            for (char c : decimalPart) {
-                                if (c != '0') {
-                                    isInteger = false;
-                                    break;
-                                }
-                            }
-                        }
-
-                        if (isInteger) {
-                            // Print as an integer
-                            cout << stoi(num) <<".0"<< endl;
-                        } else {
-                            // Print as a floating-point number with the original precision
-                            cout << stod(num) << endl;
-                        }
-                        break;
-                    }
-
-
-                        
-                    default:
-                        if(isalpha(ch)|| ch=='_'){
-                            scannedIdentifier(file_contents,i);   
-                        }
-                        else {
-                            cerr << "[line "<<line <<"] Error: Unexpected character: " << ch << endl;
-                            haderror = true;
-                             
-                        }
-                        break;
-                }
+        for (const Token &token:tokens){
+            if(token.type!=TokenType::KEYWORD){
+                cout<<token.type<<" "<<token.lexeme<<" "<<token.literal<<endl;
             }
-            std::cout << "EOF  null" << std::endl;
-            return haderror ? 65 : 0;
+            else if (token.type == TokenType::EOF_TOKEN){
+                cout<<"EOF  null"<<endl;
+            }
+            else{
+                string keyword=token.lexeme;
+                transform(keyword.begin(),keyword.end(),keyword.begin(),::toupper);
+                cout<<keyword<<" "<<token.lexeme<<" "<<token.literal<<endl;
+            }
         }
-        std::cout << "EOF  null" << std::endl;
-        
-    } else {
+    } 
+    else if (command=="parse"){
+        Parser parser(tokens);
+        auto ast = parser.parseProgram();
+        if (ast) {
+            std::cout << ast->toString() << std::endl;
+        }
+    }
+    else {
         std::cerr << "Unknown command: " << command << std::endl;
         return 1;
     }
 
-    return 0;
+    return result;
 }
 
 std::string read_file_contents(const std::string& filename) {
