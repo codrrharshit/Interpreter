@@ -38,4 +38,18 @@ public:
     }
 };
 
+// Grouping expression 
+class GroupingExpr : public Expr {
+    public:
+        std::unique_ptr<Expr> expression;
+    
+        explicit GroupingExpr(std::unique_ptr<Expr> expr)
+            : expression(std::move(expr)) {}
+    
+        std::string toString() const override {
+            return "(group " + expression->toString() + ")";
+        }
+    };
+    
+
 #endif // AST_H

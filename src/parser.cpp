@@ -82,7 +82,7 @@ std::unique_ptr<Expr> Parser::parseFactor() {
         if (!match(TokenType::RIGHT_PAREN)) {
             error("Expected ')' after expression.");
         }
-        return expr;
+        return std::make_unique<GroupingExpr>(std::move(expr)); 
     } else {
         error("Expected expression.");
         return nullptr;
