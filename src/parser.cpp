@@ -26,8 +26,9 @@ bool Parser::match(TokenType type) {
     return false;
 }
 
-void Parser::error(const std::string& message) {
-    throw std::runtime_error("[Line " + std::to_string(peek().line) + "] Error: " + message);
+void Parser::error(const Token& token, const std::string& message) {
+    std::cerr << "[line " << token.line << "] Error at '" << token.lexeme << "': " << message << std::endl;
+    throw std::runtime_error(message);  // Throw an exception instead of exiting
 }
 
 std::unique_ptr<Expr> Parser::parseProgram() {
@@ -35,12 +36,13 @@ std::unique_ptr<Expr> Parser::parseProgram() {
         return parseExpression();
     } catch (const std::runtime_error& e) {
         std::cerr << e.what() << std::endl;
-        return nullptr;
+        exit(65);  
+        
     }
 }
 
 std::unique_ptr<Expr> Parser::parseExpression() {
-    return parseEquality();  // Start from lowest precedence level
+    return parseEquality();
 
 
 }
@@ -127,16 +129,18 @@ std::unique_ptr<Expr> Parser::parsePrimary() {
         } else if (tokens[current - 1].lexeme == "nil") {
             return std::make_unique<LiteralExpr>("nil");
         }
-        error("Unexpected keyword.");
+        error(tokens[current - 1 ],"Unexpected keyword.");
         return nullptr;
     } else if (match(TokenType::LEFT_PAREN)) {
         auto expr = parseExpression();
         if (!match(TokenType::RIGHT_PAREN)) {
-            error("Expected ')' after expression.");
+            error(tokens[current-1], "Expected ')' after expression.");
+            return nullptr;  // Ensure function returns a value
+           
         }
         return std::make_unique<GroupingExpr>(std::move(expr));
-    } else {
-        error("Expected expression.");
-        return nullptr;
-    }
+    } 
+
+    error(peek(), "Expect expression.");
+    return nullptr;
 }

@@ -15,7 +15,7 @@ private:
     Token peek();
     Token advance();
     bool match(TokenType type);
-    void error(const std::string& message);
+    void error(const Token& token, const std::string& message);
 
 public:
     Parser(const std::vector<Token>& tokens);

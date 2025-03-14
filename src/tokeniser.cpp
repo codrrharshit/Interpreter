@@ -135,6 +135,7 @@ int tokenize(const std::string& file_contents ,std::vector<Token>& tokens){
                         if(i>=file_contents.length()){
                             haderror=true;
                             cerr << "[line " << line << "] Error: Unterminated string." << endl;
+                            
                             break;
                         }
 
