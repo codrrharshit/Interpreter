@@ -92,7 +92,7 @@ int main(int argc, char *argv[]) {
     }
     else if (command =="evaluate"){
         Parser parser(tokens);
-    auto ast = parser.parseProgram();
+        auto ast = parser.parseProgram();
         Evaluator evaluator;
         std::cout<<evaluator.evaluate(ast)<<std::endl;
 

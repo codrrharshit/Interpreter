@@ -16,23 +16,29 @@ public:
 // Literal expressions (e.g., numbers, strings, booleans, nil)
 class LiteralExpr : public Expr {
     public:
-        std::variant<std::string, double> value;  // Store strings and numbers correctly
+        std::variant<std::string, double > value;  // Store strings and numbers correctly
     
-        explicit LiteralExpr(const std::string& value) : value(value) {}
-        explicit LiteralExpr(double value) : value(value) {}
+        explicit LiteralExpr(const std::string& value) : value(value) {
+            
+        }
+        explicit LiteralExpr(double value) : value(value) {
+           
+        }
     
         std::string toString() const override {
             if (std::holds_alternative<double>(value)) {
-                std::ostringstream out;
-                out << std::fixed << std::setprecision(6) << std::get<double>(value);
-                std::string str = out.str();
-                
-                // Remove trailing zeros
-                str.erase(str.find_last_not_of('0') + 1, std::string::npos);
-                if (str.back() == '.') str.pop_back(); // Remove trailing decimal if needed
-                return str;
+                if (std::holds_alternative<double>(value)) {
+                    double num = std::get<double>(value);
+                    if(num== static_cast<int>(num)){
+                        return std:: to_string(static_cast<int>(num))+".0";
+                    }
+                }
             }
-            return std::get<std::string>(value);
+            
+                return std::get<std::string>(value);
+            
+
+           
         }
     };
 
