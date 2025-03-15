@@ -27,15 +27,22 @@ class LiteralExpr : public Expr {
     
         std::string toString() const override {
             if (std::holds_alternative<double>(value)) {
-                if (std::holds_alternative<double>(value)) {
-                    double num = std::get<double>(value);
-                    if(num== static_cast<int>(num)){
-                        return std:: to_string(static_cast<int>(num))+".0";
-                    }
+                double num = std::get<double>(value);
+                if (num == static_cast<int>(num)) {
+                    return std::to_string(static_cast<int>(num))+".0"; // Return as integer string
                 }
+                std::ostringstream out;
+                out << std::fixed << std::setprecision(3) << num; // Format with 3 decimal places
+                std::string str = out.str();
+                str.erase(str.find_last_not_of('0') + 1, std::string::npos); // Remove trailing zeros
+                if (!str.empty() && str.back() == '.') str.pop_back(); // Remove trailing decimal
+                return str;
+            } else if (std::holds_alternative<std::string>(value)) {
+                return std::get<std::string>(value); // Return string as-is
             }
+            return "Unknown"; // Fallback for unexpected cases
             
-                return std::get<std::string>(value);
+            
             
 
            

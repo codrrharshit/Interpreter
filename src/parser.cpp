@@ -112,6 +112,7 @@ std::unique_ptr<Expr> Parser::parseUnary() {
 std::unique_ptr<Expr> Parser::parsePrimary() {
     if (match(TokenType::NUMBER)) {
         double value = std::stod(tokens[current-1].lexeme);
+       
         return std::make_unique<LiteralExpr>(value);
     } else if (match(TokenType::STRING)) {
         std::string rawString = tokens[current - 1].lexeme;
@@ -120,6 +121,7 @@ std::unique_ptr<Expr> Parser::parsePrimary() {
         if (rawString.front() == '"' && rawString.back() == '"') {
             rawString = rawString.substr(1, rawString.length() - 2);
         }
+        
         return std::make_unique<LiteralExpr>(rawString);
     } else if (match(TokenType::KEYWORD)) {
         if (tokens[current - 1].lexeme == "true") {
