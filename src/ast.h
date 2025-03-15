@@ -4,6 +4,7 @@
 #include <string>
 #include <memory>
 #include <iomanip>
+#include "tokeniser.h"
 
 // Base class for all AST nodes
 class Expr {
@@ -23,7 +24,7 @@ class LiteralExpr : public Expr {
         std::string toString() const override {
             if (std::holds_alternative<double>(value)) {
                 std::ostringstream out;
-                out << std::fixed << std::setprecision(3) << std::get<double>(value);
+                out << std::fixed << std::setprecision(6) << std::get<double>(value);
                 std::string str = out.str();
                 
                 // Remove trailing zeros
@@ -76,6 +77,14 @@ class UnaryExpr : public Expr {
                 return "(" + op.lexeme + " " + right->toString() + ")";
             }
         };
-        
-
+class VariableExpr : public Expr {
+    public:
+        Token name;
+                
+        explicit VariableExpr(Token name) : name(std::move(name)) {}
+            
+        std::string toString() const override {
+            return name.lexeme;
+        }
+};      
 #endif // AST_H

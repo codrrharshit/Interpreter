@@ -129,9 +129,16 @@ std::unique_ptr<Expr> Parser::parsePrimary() {
         } else if (tokens[current - 1].lexeme == "nil") {
             return std::make_unique<LiteralExpr>("nil");
         }
-        error(tokens[current - 1 ],"Unexpected keyword.");
+        else {
+            return std::make_unique<LiteralExpr>(tokens[current-1].lexeme);
+        }
+        // error(tokens[current - 1 ],"Unexpected keyword.");
         return nullptr;
-    } else if (match(TokenType::LEFT_PAREN)) {
+    }else if (match(TokenType::IDENTIFIER)){
+        return std::make_unique<VariableExpr>(tokens[current-1]); 
+    }
+    
+    else if (match(TokenType::LEFT_PAREN)) {
         auto expr = parseExpression();
         if (!match(TokenType::RIGHT_PAREN)) {
             error(tokens[current-1], "Expected ')' after expression.");

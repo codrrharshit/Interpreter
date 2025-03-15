@@ -22,7 +22,9 @@ vector<Token> scannedIdentifier( const string &input, int &i, int &line) {
             i++;
         }
 
-        if (keywords.find(identifier) != keywords.end()) {
+      
+
+        if (keywords.find(identifier) != keywords.end() ) {
             tokens.push_back(Token(TokenType::KEYWORD, identifier, "null", line)); // Add keyword token
         } else {
             tokens.push_back(Token(TokenType::IDENTIFIER, identifier, "null", line)); // Add identifier token

@@ -1,5 +1,6 @@
 #include "tokeniser.h"
 #include "parser.h"
+#include "evaluator.h"
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -61,6 +62,8 @@ int main(int argc, char *argv[]) {
     int result ;
     string file_contents = read_file_contents(argv[2]);
     result= tokenize(file_contents,tokens);
+
+
     if (command == "tokenize") {
         
         for (const Token &token:tokens){
@@ -77,12 +80,22 @@ int main(int argc, char *argv[]) {
             }
         }
     } 
+
+    
+  
     else if (command=="parse"){
         Parser parser(tokens);
-        auto ast = parser.parseProgram();
+    auto ast = parser.parseProgram();
         if (ast) {
             std::cout << ast->toString() << std::endl;
         }
+    }
+    else if (command =="evaluate"){
+        Parser parser(tokens);
+    auto ast = parser.parseProgram();
+        Evaluator evaluator;
+        std::cout<<evaluator.evaluate(ast)<<std::endl;
+
     }
     else {
         std::cerr << "Unknown command: " << command << std::endl;
