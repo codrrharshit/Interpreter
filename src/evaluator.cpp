@@ -56,9 +56,31 @@ std::string Evaluator::evaluateBinary(BinaryExpr* expr) {
 
 std::string Evaluator::evaluateUnary(UnaryExpr* expr) {
     std::string right = evaluateExpr(expr->right.get());
+    size_t pos= right.find('.');
+    if(expr->op.lexeme=="-") {
+        if(pos==std::string::npos){
+            return std::to_string(-std::stoi(right));
+        }
+    }
 
-    if (expr->op.lexeme == "-") return std::to_string(-std::stod(right));
-    if (expr->op.lexeme == "!") return right == "true" ? "false" : "true";
+   // if (expr->op.lexeme == "-") return std::to_string(-std::stod(right));
+   
+        if (expr->op.lexeme == "!") {
+            // Convert numbers to booleans
+            if (right == "nil" || right == "false") {
+                return "true";
+            }
+            if (right == "true") {
+                return "false";
+            }
+            
+            if (right != "true" && right != "false") {
+                double num = std::stod(right);
+                right = (num == 0) ? "false" : "true";
+            }
+            return (right == "true") ? "false" : "true";
+        }
+    
 
     throw std::runtime_error("Unsupported unary operator.");
 }
