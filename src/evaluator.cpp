@@ -81,6 +81,10 @@ std::string Evaluator::evaluateBinary(BinaryExpr* expr) {
         if (expr->op == "-") return formatNumbers( std::to_string(leftNum - rightNum));
         if (expr->op == "*") return formatNumbers( std::to_string(leftNum * rightNum));
         if (expr->op == "/") return rightNum != 0 ? formatNumbers(std::to_string(leftNum / rightNum) ): "ERROR";
+        if( expr->op ==">") return leftNum>rightNum?"true" : "false";
+        if( expr->op == ">=") return leftNum>= rightNum ?"true" :"false";
+        if( expr->op == "<") return leftNum< rightNum ?"true" :"false";
+        if( expr->op == "<=") return leftNum<= rightNum ?"true" :"false";
     }
     if (expr->op == "+") {
         return left + right;  // Concatenation
