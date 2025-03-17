@@ -119,12 +119,20 @@ Evalstr Evaluator::evaluateBinary(BinaryExpr* expr) {
 }
 
 Evalstr Evaluator::evaluateUnary(UnaryExpr* expr) {
-    std::string right = evaluateExpr(expr->right.get()).value;
+    Evalstr RIGHT= evaluateExpr(expr->right.get());
+    std::string right = RIGHT.value;
     size_t pos= right.find('.');
     if(expr->op.lexeme=="-") {
-        if(pos==std::string::npos){
+        if(RIGHT.wasNumber){
+          if(pos==std::string::npos){
             return {std::to_string(-std::stoi(right)),true};
+        }  
         }
+        else {
+            std::cerr << "Operand must be a number.\n[line " << expr->op.line << "]\n";
+            exit(70); // Ensures correct runtime error code
+        }
+        
     }
 
    // if (expr->op.lexeme == "-") return std::to_string(-std::stod(right));
