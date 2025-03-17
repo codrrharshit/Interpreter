@@ -69,7 +69,7 @@ std::string Evaluator::evaluateBinary(BinaryExpr* expr) {
     std::string left = evaluateExpr(expr->left.get());
     std::string right = evaluateExpr(expr->right.get());
 
-    std::cout<<
+   
 
     // if (expr->op == "==") return left == right ? "true" : "false";
     // if (expr->op == "!=") return left != right ? "true" : "false";
