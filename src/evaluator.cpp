@@ -69,8 +69,7 @@ std::string Evaluator::evaluateBinary(BinaryExpr* expr) {
     std::string left = evaluateExpr(expr->left.get());
     std::string right = evaluateExpr(expr->right.get());
 
-    left= formatNumbers(left);
-    right=formatNumbers(right);
+    std::cout<<
 
     // if (expr->op == "==") return left == right ? "true" : "false";
     // if (expr->op == "!=") return left != right ? "true" : "false";
@@ -82,6 +81,9 @@ std::string Evaluator::evaluateBinary(BinaryExpr* expr) {
         if (expr->op == "-") return formatNumbers( std::to_string(leftNum - rightNum));
         if (expr->op == "*") return formatNumbers( std::to_string(leftNum * rightNum));
         if (expr->op == "/") return rightNum != 0 ? formatNumbers(std::to_string(leftNum / rightNum) ): "ERROR";
+    }
+    if (expr->op == "+") {
+        return left + right;  // Concatenation
     }
    
     throw std::runtime_error("Invalid binary operation.");
