@@ -31,7 +31,6 @@ std::string Evaluator::evaluateExpr(Expr* expr) {
         return evaluateUnary(unary);
     }
     else if (auto grouping = dynamic_cast<GroupingExpr*>(expr)) {
-        std::cout << "Debug: Evaluating GroupingExpr" << std::endl;
         return evaluateExpr(grouping->expression.get());  // 🔥 Evaluate inner expression
     } 
     throw std::runtime_error("Unknown expression.");
