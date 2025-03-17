@@ -78,8 +78,8 @@ std::string Evaluator::evaluateBinary(BinaryExpr* expr) {
     if (isNumber(left) && isNumber(right)) {
         double leftNum = std::stod(left);
         double rightNum = std::stod(right);
-        if (expr->op == "+") return std::to_string(leftNum + rightNum);
-        if (expr->op == "-") return std::to_string(leftNum - rightNum);
+        if (expr->op == "+") return formatNumbers(std::to_string(leftNum + rightNum));
+        if (expr->op == "-") return formatNumbers( std::to_string(leftNum - rightNum));
         if (expr->op == "*") return formatNumbers( std::to_string(leftNum * rightNum));
         if (expr->op == "/") return rightNum != 0 ? formatNumbers(std::to_string(leftNum / rightNum) ): "ERROR";
     }
