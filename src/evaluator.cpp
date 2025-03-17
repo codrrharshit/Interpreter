@@ -113,9 +113,13 @@ Evalstr Evaluator::evaluateBinary(BinaryExpr* expr) {
     }
     if (expr->op == "+") {
         return {left + right,false};  // Concatenation
+    }else {
+        std::cerr<<"Operands must be numbers. \n[line 1]\n";
+        exit(70);
     }
+    
    
-    throw std::runtime_error("Invalid binary operation.");
+    // throw std::runtime_error("Invalid binary operation.");
 }
 
 Evalstr Evaluator::evaluateUnary(UnaryExpr* expr) {
