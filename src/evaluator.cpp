@@ -3,6 +3,35 @@
 #include <cctype>
 #include <cmath>
 
+std::string formatNumbers( const std::string &str){
+    try
+    {
+        size_t pos;
+        double num= std::stod(str,&pos);
+        if(pos!=str.size()){
+            return str;
+        }
+
+
+        if(num== static_cast<int>(num)){
+            return std::to_string(static_cast<int>(num));
+        }
+
+        std::ostringstream out;
+        out<<std::fixed<<std::setprecision(6)<<num;
+        std::string formatted= out.str();
+
+        formatted.erase(formatted.find_last_not_of('0') + 1, std::string::npos);
+        if (formatted.back() == '.') formatted.pop_back();
+        return formatted;
+    }
+    catch(const std::invalid_argument&)
+    {
+        return str;
+    }
+    
+}
+
 std::string Evaluator::evaluate(std::unique_ptr<Expr>& expr) {
     return evaluateExpr(expr.get());
 }
@@ -40,17 +69,21 @@ std::string Evaluator::evaluateBinary(BinaryExpr* expr) {
     std::string left = evaluateExpr(expr->left.get());
     std::string right = evaluateExpr(expr->right.get());
 
-    if (expr->op == "==") return left == right ? "true" : "false";
-    if (expr->op == "!=") return left != right ? "true" : "false";
+    left= formatNumbers(left);
+    right=formatNumbers(right);
+
+    // if (expr->op == "==") return left == right ? "true" : "false";
+    // if (expr->op == "!=") return left != right ? "true" : "false";
 
     if (isNumber(left) && isNumber(right)) {
         double leftNum = std::stod(left);
         double rightNum = std::stod(right);
         if (expr->op == "+") return std::to_string(leftNum + rightNum);
         if (expr->op == "-") return std::to_string(leftNum - rightNum);
-        if (expr->op == "*") return std::to_string(leftNum * rightNum);
-        if (expr->op == "/") return rightNum != 0 ? std::to_string(leftNum / rightNum) : "ERROR";
+        if (expr->op == "*") return formatNumbers( std::to_string(leftNum * rightNum));
+        if (expr->op == "/") return rightNum != 0 ? formatNumbers(std::to_string(leftNum / rightNum) ): "ERROR";
     }
+   
     throw std::runtime_error("Invalid binary operation.");
 }
 
@@ -86,5 +119,10 @@ std::string Evaluator::evaluateUnary(UnaryExpr* expr) {
 }
 
 bool Evaluator::isNumber(const std::string& str) {
-    return !str.empty() && (std::isdigit(str[0]) || str[0] == '-');
+    if (str.empty()) return false;
+    
+    char* end;
+    std::strtod(str.c_str(), &end);
+    
+    return *end == '\0'; 
 }
