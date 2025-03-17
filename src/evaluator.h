@@ -7,12 +7,18 @@
 #include <string>
 #include "ast.h"
 
+
+struct Evalstr{
+    std::string value;
+    bool wasNumber;
+};
+
 class Evaluator
 {
 private:
-    std::string evaluateExpr(Expr* expr);
-    std::string evaluateBinary(BinaryExpr* expr);
-    std::string evaluateUnary(UnaryExpr* expr);
+    Evalstr evaluateExpr(Expr* expr);
+    Evalstr evaluateBinary(BinaryExpr* expr);
+    Evalstr evaluateUnary(UnaryExpr* expr);
     bool isNumber(const std::string& str);
 public:
    std::string evaluate(std::unique_ptr<Expr>&expr);
