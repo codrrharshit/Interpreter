@@ -125,11 +125,11 @@ std::unique_ptr<Expr> Parser::parsePrimary() {
         return std::make_unique<LiteralExpr>(rawString);
     } else if (match(TokenType::KEYWORD)) {
         if (tokens[current - 1].lexeme == "true") {
-            return std::make_unique<LiteralExpr>("true");
+            return std::make_unique<LiteralExpr>(true);
         } else if (tokens[current - 1].lexeme == "false") {
-            return std::make_unique<LiteralExpr>("false");
+            return std::make_unique<LiteralExpr>(false);
         } else if (tokens[current - 1].lexeme == "nil") {
-            return std::make_unique<LiteralExpr>("nil");
+            return std::make_unique<LiteralExpr>(NilValue());
         }
         else {
             return std::make_unique<LiteralExpr>(tokens[current-1].lexeme);

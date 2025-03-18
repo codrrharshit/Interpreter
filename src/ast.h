@@ -5,7 +5,17 @@
 #include <memory>
 #include <iomanip>
 #include "tokeniser.h"
+#include <fstream>
 
+class NilValue {
+    public:
+        bool operator==(const NilValue&) const { return true; }  // All NilValues are equal
+        bool operator!=(const NilValue&) const { return false; } // Nil is never different from another Nil
+    
+        friend std::ostream& operator<<(std::ostream& os, const NilValue&) {
+            return os << "nil";
+        }
+    };
 // Base class for all AST nodes
 class Expr {
 public:
@@ -16,15 +26,14 @@ public:
 // Literal expressions (e.g., numbers, strings, booleans, nil)
 class LiteralExpr : public Expr {
     public:
-        std::variant<std::string, double > value;  // Store strings and numbers correctly
+        std::variant<std::string,bool,double,NilValue > value;  // Store strings and numbers correctly
     
         explicit LiteralExpr(const std::string& value) : value(value) {
-            
         }
+        explicit LiteralExpr(bool value) : value(value){}
         explicit LiteralExpr(double value) : value(value) {
-           
         }
-    
+        explicit LiteralExpr(NilValue value):value(value) {}
         std::string toString() const override {
             if (std::holds_alternative<double>(value)) {
                 double num = std::get<double>(value);
@@ -39,6 +48,12 @@ class LiteralExpr : public Expr {
                 return str;
             } else if (std::holds_alternative<std::string>(value)) {
                 return std::get<std::string>(value); // Return string as-is
+            }
+            else if(std::holds_alternative<bool>(value)){
+                return std::get<bool>(value)==true ?"true":"false";
+            }
+            else if (std::holds_alternative<NilValue>(value)){
+                return "nil";
             }
             return "Unknown"; // Fallback for unexpected cases
             

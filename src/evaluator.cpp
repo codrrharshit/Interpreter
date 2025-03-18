@@ -43,19 +43,26 @@ Evalstr Evaluator::evaluateExpr(Expr* expr) {
         return evaluateBinary(binary);
     } else if (auto literal = dynamic_cast<LiteralExpr*>(expr)) {
         if (std::holds_alternative<std::string>(literal->value)) {
-            return {std::get<std::string>(literal->value),false};
-              // Extract string correctly
+
+            return {std::get<std::string>(literal->value),"string"};
+              
         } else if (std::holds_alternative<double>(literal->value)) {
             double num = std::get<double>(literal->value);
             if (num == static_cast<int>(num)) {
-                return {std::to_string(static_cast<int>(num)),true}; // Return as integer string
+                return {std::to_string(static_cast<int>(num)),"double"}; // Return as integer string
             }
             std::ostringstream out;
             out << std::fixed << std::setprecision(3) << num; // Format with 3 decimal places
             std::string str = out.str();
             str.erase(str.find_last_not_of('0') + 1, std::string::npos); // Remove trailing zeros
             if (!str.empty() && str.back() == '.') str.pop_back(); // Remove trailing decimal
-            return {str,true};
+            return {str,"double"};
+            }
+            else if(std::holds_alternative<bool>(literal->value)){
+                return {std::get<bool>(literal->value)==true ?"true":"false","bool"};
+            }
+            else if(std::holds_alternative<NilValue>(literal->value)){
+                return {"nil", "nil"};
             }
     } else if (auto unary = dynamic_cast<UnaryExpr*>(expr)) {
         return evaluateUnary(unary);
@@ -75,26 +82,32 @@ Evalstr Evaluator::evaluateBinary(BinaryExpr* expr) {
 
 
     if(expr->op=="=="){
-        if(LEFT.wasNumber && RIGHT.wasNumber){
-            return {left==right?"true":"false",false};
+        if(LEFT.datatype=="double" && RIGHT.datatype=="double"){
+            return {left==right?"true":"false","bool"};
         }
-        else if(!LEFT.wasNumber && !RIGHT.wasNumber){
-            return {left==right?"true":"false",false};
+        else if(LEFT.datatype=="string" && RIGHT.datatype=="string"){
+            return {left==right?"true":"false","bool"};
         }
+       else if (LEFT.datatype=="bool" && RIGHT.datatype=="bool"){
+         return {left==right?"true":"false","bool"};
+       }
         else {
-             return {"false",false};
+             return {"false","bool"};
         }
     }
 
     if(expr->op=="!="){
-        if(LEFT.wasNumber && RIGHT.wasNumber){
-            return {left!=right?"true":"false",false};
+        if(LEFT.datatype=="double" && RIGHT.datatype=="double"){
+            return {left!=right?"true":"false","bool"};
         }
-        else if(!LEFT.wasNumber && !RIGHT.wasNumber){
-            return {left!=right?"true":"false",false};
+        else if(LEFT.datatype=="string" && RIGHT.datatype=="string"){
+            return {left!=right?"true":"false","bool"};
         }
+        else if (LEFT.datatype=="bool" && RIGHT.datatype=="bool"){
+            return {left==right?"true":"false","bool"};
+          }
         else {
-             return {"false",false};
+             return {"false","bool"};
         }
     }
 
@@ -102,17 +115,21 @@ Evalstr Evaluator::evaluateBinary(BinaryExpr* expr) {
     if (isNumber(left) && isNumber(right)) {
         double leftNum = std::stod(left);
         double rightNum = std::stod(right);
-        if (expr->op == "+") return {formatNumbers(std::to_string(leftNum + rightNum)),true};
-        if (expr->op == "-") return {formatNumbers( std::to_string(leftNum - rightNum)),true};
-        if (expr->op == "*") return {formatNumbers( std::to_string(leftNum * rightNum)),true};
-        if (expr->op == "/") return {rightNum != 0 ? formatNumbers(std::to_string(leftNum / rightNum) ): "ERROR",true};
-        if( expr->op ==">") return {leftNum>rightNum?"true" : "false",false};
-        if( expr->op == ">=") return {leftNum>= rightNum ?"true" :"false",false};
-        if( expr->op == "<") return {leftNum< rightNum ?"true" :"false",false};
-        if( expr->op == "<=") return {leftNum<= rightNum ?"true" :"false",false};
+        if (expr->op == "+") return {formatNumbers(std::to_string(leftNum + rightNum)),"double"};
+        if (expr->op == "-") return {formatNumbers( std::to_string(leftNum - rightNum)),"double"};
+        if (expr->op == "*") return {formatNumbers( std::to_string(leftNum * rightNum)),"double"};
+        if (expr->op == "/") return {rightNum != 0 ? formatNumbers(std::to_string(leftNum / rightNum) ): "ERROR","double"};
+        if( expr->op ==">") return {leftNum>rightNum?"true" : "false","bool"};
+        if( expr->op == ">=") return {leftNum>= rightNum ?"true" :"false","bool"};
+        if( expr->op == "<") return {leftNum< rightNum ?"true" :"false","bool"};
+        if( expr->op == "<=") return {leftNum<= rightNum ?"true" :"false","bool"};
     }
     if (expr->op == "+") {
-        return {left + right,false};  // Concatenation
+        if(LEFT.datatype!="string" || RIGHT.datatype!="string"){
+            std::cerr<<"Operands must be numbers. \n[line 1]\n";
+            exit(70);
+        }
+        return {left + right,"string"};  // Concatenation
     }else {
         std::cerr<<"Operands must be numbers. \n[line 1]\n";
         exit(70);
@@ -127,9 +144,9 @@ Evalstr Evaluator::evaluateUnary(UnaryExpr* expr) {
     std::string right = RIGHT.value;
     size_t pos= right.find('.');
     if(expr->op.lexeme=="-") {
-        if(RIGHT.wasNumber){
+        if(RIGHT.datatype=="double"){
           if(pos==std::string::npos){
-            return {std::to_string(-std::stoi(right)),true};
+            return {std::to_string(-std::stoi(right)),"double"};
         }  
         }
         else {
@@ -144,17 +161,18 @@ Evalstr Evaluator::evaluateUnary(UnaryExpr* expr) {
         if (expr->op.lexeme == "!") {
             // Convert numbers to booleans
             if (right == "nil" || right == "false") {
-                return {"true",false};
+                return {"true","string"};
             }
             if (right == "true") {
-                return {"false",false};
+                return {"false","string"};
             }
             
-            if (right != "true" && right != "false") {
+               
                 double num = std::stod(right);
                 right = (num == 0) ? "false" : "true";
-            }
-            return {(right == "true") ? "false" : "true",true};
+            
+
+            return {(right == "true") ? "false" : "true","double"};
         }
     
 

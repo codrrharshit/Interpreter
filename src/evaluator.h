@@ -10,7 +10,7 @@
 
 struct Evalstr{
     std::string value;
-    bool wasNumber;
+    std::string datatype;
 };
 
 class Evaluator
