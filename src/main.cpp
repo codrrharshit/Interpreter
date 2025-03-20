@@ -1,6 +1,7 @@
 #include "tokeniser.h"
 #include "parser.h"
 #include "evaluator.h"
+#include "runner.h"
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -94,8 +95,20 @@ int main(int argc, char *argv[]) {
         Parser parser(tokens);
         auto ast = parser.parseProgram();
         Evaluator evaluator;
-        std::cout<<evaluator.evaluate(ast)<<std::endl;
+        evaluator.evaluateProgram(ast);
 
+    }
+    else if (command == "run") {
+        Parser parser(tokens);
+        auto ast = parser.parseProgram();  // AST should be a list of statements
+
+        if (!ast) {
+            std::cerr << "Parsing failed!" << std::endl;
+            return 1;
+        }
+
+        Runner runner;
+        runner.run(ast);  // Executes statements, printing output when needed
     }
     else {
         std::cerr << "Unknown command: " << command << std::endl;

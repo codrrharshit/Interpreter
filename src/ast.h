@@ -7,6 +7,8 @@
 #include "tokeniser.h"
 #include <fstream>
 
+
+
 class NilValue {
     public:
         bool operator==(const NilValue&) const { return true; }  // All NilValues are equal
@@ -55,14 +57,9 @@ class LiteralExpr : public Expr {
             else if (std::holds_alternative<NilValue>(value)){
                 return "nil";
             }
-            return "Unknown"; // Fallback for unexpected cases
-            
-            
-            
-
-           
-        }
-    };
+            return "Unknown";
+         } // Fallback for unexpected cases
+};
 
 // Binary expressions (e.g., 2 + 3)
 class BinaryExpr : public Expr {
@@ -114,5 +111,45 @@ class VariableExpr : public Expr {
         std::string toString() const override {
             return name.lexeme;
         }
-};      
+}; 
+
+struct Stmt{
+    virtual ~Stmt()= default;
+    virtual std::string toString() const = 0;
+};
+
+struct PrintStmt : Stmt {
+    std::unique_ptr<Expr> expression;
+    PrintStmt(std::unique_ptr<Expr> expr) : expression(std::move(expr)) {}
+    std::string toString() const override {
+        return "(print " + expression->toString() + ")";
+    }
+};
+
+class ExpressionStmt : public Stmt {
+    public:
+        std::unique_ptr<Expr> expression;
+    
+        ExpressionStmt(std::unique_ptr<Expr> expr) 
+            : expression(std::move(expr)) {}
+    
+        std::string toString() const override {
+            return  expression->toString() ;
+         }
+    };
+
+struct Program {
+    std::vector<std::unique_ptr<Stmt>> statements;
+
+    std::string toString() const {
+        std::ostringstream out;
+        for (const auto& stmt : statements) {
+            out << stmt->toString() << "\n";  // Assuming `Stmt` has `toString()`
+        }
+        return out.str();
+    }
+};
+
+
+
 #endif // AST_H

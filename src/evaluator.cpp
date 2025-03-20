@@ -38,6 +38,35 @@ std::string Evaluator::evaluate(std::unique_ptr<Expr>& expr) {
     return evaluateExpr(expr.get()).value;
 }
 
+
+void Evaluator::evaluateStmt( const std::unique_ptr<Stmt>& stmt) {
+    if (auto printStmt = dynamic_cast<PrintStmt*>(stmt.get())) {
+        evaluatePrint(printStmt);
+    }
+    else if(auto expressionStmt= dynamic_cast<ExpressionStmt*>(stmt.get())){
+        evaluateExpression(expressionStmt);
+    }
+    else {
+        throw std::runtime_error("Unknown statement type.");
+    }
+}
+void Evaluator::evaluateProgram(const std::unique_ptr<Program>& program) {
+    for (const auto& stmt : program->statements) {
+        evaluateStmt(stmt);
+    }
+}
+
+
+void Evaluator::evaluateExpression(ExpressionStmt *stmt){
+    Evalstr result=evaluateExpr(stmt->expression.get());
+    std::cout<<result.value<<std::endl;
+}
+
+void Evaluator::evaluatePrint(PrintStmt* stmt) {
+    Evalstr result = evaluateExpr(stmt->expression.get());
+    std::cout << result.value << std::endl;
+}
+
 Evalstr Evaluator::evaluateExpr(Expr* expr) {
     if (auto binary = dynamic_cast<BinaryExpr*>(expr)) {
         return evaluateBinary(binary);

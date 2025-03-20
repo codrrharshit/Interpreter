@@ -17,13 +17,16 @@ private:
     bool match(TokenType type);
     void error(const Token& token, const std::string& message);
 
+    std::unique_ptr<Stmt> parseStatement();
+    std::unique_ptr<Stmt> parsePrintStatement();
+
 public:
     Parser(const std::vector<Token>& tokens);
-    std::unique_ptr<Expr> parseProgram();
+    std::unique_ptr<Program> parseProgram();
     std::unique_ptr<Expr> parseExpression();
     std::unique_ptr<Expr> parseTerm();
     std::unique_ptr<Expr> parseFactor();
-    std::unique_ptr<Expr> parseUnary();    
+    std::unique_ptr<Expr> parseUnary();
     std::unique_ptr<Expr> parsePrimary();
     std::unique_ptr<Expr> parseComparison();
     std::unique_ptr<Expr> parseEquality();
