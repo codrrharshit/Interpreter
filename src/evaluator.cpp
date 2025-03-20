@@ -47,6 +47,9 @@ void Evaluator::evaluateStmt( const std::unique_ptr<Stmt>& stmt) {
     else if(auto expressionStmt= dynamic_cast<ExpressionStmt*>(stmt.get())){
         evaluateExpression(expressionStmt);
     }
+    else if (auto varStmt = dynamic_cast<VarDeclStmt*>(stmt.get())) {
+        evaluateVariable(varStmt);
+    }
     else {
         throw std::runtime_error("Unknown statement type.");
     }
@@ -68,6 +71,10 @@ void Evaluator::evaluateExpression(ExpressionStmt *stmt){
 void Evaluator::evaluatePrint(PrintStmt* stmt) {
     Evalstr result = evaluateExpr(stmt->expression.get());
     std::cout << result.value << std::endl;
+}
+void Evaluator::evaluateVariable(VarDeclStmt* stmt) {
+    Evalstr value = evaluateExpr(stmt->initializer.get());
+    variables[stmt->name] = value;  // Store variable in map
 }
 
 Evalstr Evaluator::evaluateExpr(Expr* expr) {
@@ -102,6 +109,13 @@ Evalstr Evaluator::evaluateExpr(Expr* expr) {
     else if (auto grouping = dynamic_cast<GroupingExpr*>(expr)) {
         return evaluateExpr(grouping->expression.get());  
     } 
+
+    else if (auto varExpr = dynamic_cast<VariableExpr*>(expr)) {
+        if (variables.find(varExpr->name) == variables.end()) {
+            throw std::runtime_error("Undefined variable: " + varExpr->name);
+        }
+        return variables[varExpr->name];
+    }
     throw std::runtime_error("Unknown expression.");
 }
 

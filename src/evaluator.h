@@ -5,6 +5,7 @@
 #include <memory>
 #include <string>
 #include "ast.h"
+#include <unordered_map>
 
 struct Evalstr {
     std::string value;
@@ -24,8 +25,10 @@ private:
 public:
 
     Evaluator(bool isEvaluatedMode=false);
+    std::unordered_map<std::string, Evalstr> variables; 
     std::string evaluate(std::unique_ptr<Expr>& expr);
     void evaluateStmt( const std::unique_ptr<Stmt>& stmt);
+    void evaluateVariable(VarDeclStmt* stmt);
     void evaluateProgram(const std::unique_ptr<Program>& program);
 };
 

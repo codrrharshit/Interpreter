@@ -102,17 +102,30 @@ class UnaryExpr : public Expr {
                 return "(" + op.lexeme + " " + right->toString() + ")";
             }
         };
-class VariableExpr : public Expr {
+
+ class VariableExpr : public Expr {
     public:
-        Token name;
-                
-        explicit VariableExpr(Token name) : name(std::move(name)) {}
+        std::string name;
+            
+        explicit VariableExpr(std::string name) : name(std::move(name)) {}
             
         std::string toString() const override {
-            return name.lexeme;
+            return name;
         }
-}; 
+ };
 
+ class AssignExpr : public Expr {
+    public:
+        std::string name;
+        std::unique_ptr<Expr> value;
+    
+        AssignExpr(std::string name, std::unique_ptr<Expr> value)
+            : name(std::move(name)), value(std::move(value)) {}
+    
+        std::string toString() const override {
+            return "(" + name + " = " + value->toString() + ")";
+        }
+    };
 struct Stmt{
     virtual ~Stmt()= default;
     virtual std::string toString() const = 0;
@@ -137,6 +150,33 @@ class ExpressionStmt : public Stmt {
             return  expression->toString() ;
          }
     };
+
+    class VarDeclStmt : public Stmt {
+        public:
+            std::string name;
+            std::unique_ptr<Expr> initializer;
+        
+            VarDeclStmt(std::string name, std::unique_ptr<Expr> initializer)
+                : name(std::move(name)), initializer(std::move(initializer)) {}
+        
+            std::string toString() const override {
+                return "(var " + name + " = " + (initializer ? initializer->toString() : "nil") + ")";
+            }
+        };
+        
+        // **Variable assignment (e.g., `x = 42;`)**
+        class AssignStmt : public Stmt {
+        public:
+            std::string name;
+            std::unique_ptr<Expr> value;
+        
+            AssignStmt(std::string name, std::unique_ptr<Expr> value)
+                : name(std::move(name)), value(std::move(value)) {}
+        
+            std::string toString() const override {
+                return "(" + name + " = " + value->toString() + ")";
+            }
+        };
 
 struct Program {
     std::vector<std::unique_ptr<Stmt>> statements;
