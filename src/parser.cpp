@@ -1,7 +1,9 @@
 #include "parser.h"
 #include <iostream>
 
-Parser::Parser(const std::vector<Token>& tokens) : tokens(tokens) {}
+Parser::Parser(const std::vector<Token>& tokens) : tokens(tokens) {
+
+}
 
 bool Parser::isAtEnd() {
     return current >= tokens.size();
@@ -36,9 +38,12 @@ void Parser::error(const Token& token, const std::string& message) {
 std::unique_ptr<Program> Parser::parseProgram() {
     auto program = std::make_unique<Program>();
 
+     while (current < tokens.size()-1) {  // Keep parsing until EOF
         auto stmt = parseStatement();
         if (stmt) {
             program->statements.push_back(std::move(stmt));
+        }
+        
     }
     
     return program;
@@ -46,6 +51,7 @@ std::unique_ptr<Program> Parser::parseProgram() {
 
 // Parse a statement (right now, only handling `print` statements)
 std::unique_ptr<Stmt> Parser::parseStatement() {
+    if (current >= tokens.size()) return nullptr;
     if (peek().type == TokenType::KEYWORD && peek().lexeme == "print") {
         match(TokenType::KEYWORD);  // Now we only consume "print"
         return parsePrintStatement();

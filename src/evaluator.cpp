@@ -133,7 +133,7 @@ Evalstr Evaluator::evaluateBinary(BinaryExpr* expr) {
             return {left!=right?"true":"false","bool"};
         }
         else if (LEFT.datatype=="bool" && RIGHT.datatype=="bool"){
-            return {left==right?"true":"false","bool"};
+            return {left!=right?"true":"false","bool"};
           }
         else {
              return {"false","bool"};
