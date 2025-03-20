@@ -13,6 +13,7 @@ struct Evalstr {
 
 class Evaluator {
 private:
+    bool isEvaluatedMode;
     Evalstr evaluateExpr(Expr* expr);
     Evalstr evaluateBinary(BinaryExpr* expr);
     Evalstr evaluateUnary(UnaryExpr* expr);
@@ -21,6 +22,8 @@ private:
     void evaluateExpression(ExpressionStmt * stmt);
 
 public:
+
+    Evaluator(bool isEvaluatedMode=false);
     std::string evaluate(std::unique_ptr<Expr>& expr);
     void evaluateStmt( const std::unique_ptr<Stmt>& stmt);
     void evaluateProgram(const std::unique_ptr<Program>& program);

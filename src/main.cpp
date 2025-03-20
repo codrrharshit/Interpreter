@@ -85,22 +85,22 @@ int main(int argc, char *argv[]) {
     
   
     else if (command=="parse"){
-        Parser parser(tokens);
+        Parser parser(tokens,true);
     auto ast = parser.parseProgram();
         if (ast) {
             std::cout << ast->toString() << std::endl;
         }
     }
     else if (command =="evaluate"){
-        Parser parser(tokens);
-        auto ast = parser.parseProgram();
-        Evaluator evaluator;
+        Parser parserforEvaluate(tokens,true);
+        auto ast = parserforEvaluate.parseProgram();
+        Evaluator evaluator(true);
         evaluator.evaluateProgram(ast);
 
     }
     else if (command == "run") {
-        Parser parser(tokens);
-        auto ast = parser.parseProgram();  // AST should be a list of statements
+        Parser parserforRun(tokens,false);
+        auto ast = parserforRun.parseProgram();  // AST should be a list of statements
 
         if (!ast) {
             std::cerr << "Parsing failed!" << std::endl;

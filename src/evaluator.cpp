@@ -4,6 +4,7 @@
 #include <cmath>
 
 // complex data types 
+Evaluator::Evaluator(bool isEvaluatedMode) : isEvaluatedMode(isEvaluatedMode) {}
 
 std::string formatNumbers( const std::string &str){
     try
@@ -59,7 +60,9 @@ void Evaluator::evaluateProgram(const std::unique_ptr<Program>& program) {
 
 void Evaluator::evaluateExpression(ExpressionStmt *stmt){
     Evalstr result=evaluateExpr(stmt->expression.get());
-    std::cout<<result.value<<std::endl;
+    if(isEvaluatedMode){
+        std::cout<<result.value<<std::endl;
+    }
 }
 
 void Evaluator::evaluatePrint(PrintStmt* stmt) {

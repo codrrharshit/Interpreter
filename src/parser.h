@@ -10,6 +10,9 @@ class Parser {
 private:
     std::vector<Token> tokens;
     size_t current = 0;
+    bool isEvaluateMode;
+
+
 
     bool isAtEnd();
     Token peek();
@@ -21,7 +24,7 @@ private:
     std::unique_ptr<Stmt> parsePrintStatement();
 
 public:
-    Parser(const std::vector<Token>& tokens);
+   Parser(const std::vector<Token>& tokens, bool isEvaluateMode = false);
     std::unique_ptr<Program> parseProgram();
     std::unique_ptr<Expr> parseExpression();
     std::unique_ptr<Expr> parseTerm();

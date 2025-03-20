@@ -1,9 +1,8 @@
 #include "parser.h"
 #include <iostream>
 
-Parser::Parser(const std::vector<Token>& tokens) : tokens(tokens) {
-
-}
+Parser::Parser(const std::vector<Token>& tokens, bool isEvaluateMode)
+    : tokens(tokens), isEvaluateMode(isEvaluateMode) {}
 
 bool Parser::isAtEnd() {
     return current >= tokens.size();
@@ -57,6 +56,13 @@ std::unique_ptr<Stmt> Parser::parseStatement() {
         return parsePrintStatement();
     }
     auto expr = parseExpression();
+
+    if(!isEvaluateMode){
+      if (!match(TokenType::SEMICOLON)) {
+        error(tokens[current - 1], "Expected ';' after expression.");
+    }  
+    }
+    
     return std::make_unique<ExpressionStmt>(std::move(expr));
 }
 
@@ -171,6 +177,7 @@ std::unique_ptr<Expr> Parser::parsePrimary() {
         }
         return std::make_unique<GroupingExpr>(std::move(expr));
     }
+    
 
     error(peek(), "Expect expression.");
     return nullptr;
