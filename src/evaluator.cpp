@@ -73,8 +73,15 @@ void Evaluator::evaluatePrint(PrintStmt* stmt) {
     std::cout << result.value << std::endl;
 }
 void Evaluator::evaluateVariable(VarDeclStmt* stmt) {
-    Evalstr value = evaluateExpr(stmt->initializer.get());
-    variables[stmt->name] = value;  // Store variable in map
+    if(stmt->initializer.get()==nullptr){
+        Evalstr value={"nil","nil"};
+        variables[stmt->name]=value;
+    }
+    else {
+       Evalstr value = evaluateExpr(stmt->initializer.get());
+        variables[stmt->name] = value;  // Store variable in map 
+    }
+    
 }
 
 Evalstr Evaluator::evaluateExpr(Expr* expr) {
