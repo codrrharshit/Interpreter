@@ -112,7 +112,8 @@ Evalstr Evaluator::evaluateExpr(Expr* expr) {
 
     else if (auto varExpr = dynamic_cast<VariableExpr*>(expr)) {
         if (variables.find(varExpr->name) == variables.end()) {
-            throw std::runtime_error("Undefined variable: " + varExpr->name);
+            std::cerr<<"Undefined Variable"<<varExpr->name<<std::endl;
+            exit(70);
         }
         return variables[varExpr->name];
     }
