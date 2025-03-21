@@ -124,6 +124,17 @@ Evalstr Evaluator::evaluateExpr(Expr* expr) {
         }
         return variables[varExpr->name];
     }
+    else if (auto assignExpr = dynamic_cast<AssignExpr*>(expr)) {
+        if (variables.find(assignExpr->name) == variables.end()) {
+            std::cerr << "Undefined variable '" << assignExpr->name << "'." << std::endl;
+            exit(70);
+        }
+        
+        Evalstr value = evaluateExpr(assignExpr->value.get()); // Evaluate RHS first
+        variables[assignExpr->name] = value; // Assign the value
+    
+        return value; // Return assigned value for chaining
+    }
     throw std::runtime_error("Unknown expression.");
 }
 
