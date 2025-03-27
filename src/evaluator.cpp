@@ -1,10 +1,14 @@
 #include "evaluator.h"
+#include "environment.h"
 #include <stdexcept>
 #include <cctype>
 #include <cmath>
 
 // complex data types 
-Evaluator::Evaluator(bool isEvaluatedMode) : isEvaluatedMode(isEvaluatedMode) {}
+Evaluator::Evaluator(bool isEvaluatedMode) : isEvaluatedMode(isEvaluatedMode) {
+    globals = std::make_shared<Environment>();
+    environment = globals;
+}
 
 std::string formatNumbers( const std::string &str){
     try
@@ -63,9 +67,23 @@ void Evaluator::evaluateProgram(const std::unique_ptr<Program>& program) {
 }
 
 void Evaluator::evaluateBlock(BlockStmt *stmt) {
-    for (const auto &statement : stmt->statements) {
-        evaluateStmt(statement);
+    // Save the current environment
+    auto previous = environment;
+    
+    // Create a new nested environment
+    environment = std::make_shared<Environment>(previous);
+    
+    try {
+        for (const auto &statement : stmt->statements) {
+            evaluateStmt(statement);
+        }
+    } catch (...) {
+        environment = previous;  // Restore previous environment on error
+        throw;
     }
+
+    // Restore the previous environment after execution
+    environment = previous;
 }
 
 
@@ -82,12 +100,11 @@ void Evaluator::evaluatePrint(PrintStmt* stmt) {
 }
 void Evaluator::evaluateVariable(VarDeclStmt* stmt) {
     if(stmt->initializer.get()==nullptr){
-        Evalstr value={"nil","nil"};
-        variables[stmt->name]=value;
+        environment->define(stmt->name, "nil");
     }
     else {
        Evalstr value = evaluateExpr(stmt->initializer.get());
-        variables[stmt->name] = value;  // Store variable in map 
+       environment->define(stmt->name, value.value);
     }
     
 }
@@ -126,22 +143,29 @@ Evalstr Evaluator::evaluateExpr(Expr* expr) {
     } 
 
     else if (auto varExpr = dynamic_cast<VariableExpr*>(expr)) {
-        if (variables.find(varExpr->name) == variables.end()) {
-            std::cerr<<"Undefined Variable"<<varExpr->name<<std::endl;
+        try {
+            std::string value = environment->get(varExpr->name);
+            // Determine the datatype based on the value
+            std::string datatype = "string"; // default
+            if (value == "true" || value == "false") datatype = "bool";
+            else if (value == "nil") datatype = "nil";
+            else if (isNumber(value)) datatype = "double";
+            
+            return {value, datatype};
+        } catch (const std::runtime_error& e) {
+            std::cerr << e.what() << std::endl;
             exit(70);
         }
-        return variables[varExpr->name];
     }
     else if (auto assignExpr = dynamic_cast<AssignExpr*>(expr)) {
-        if (variables.find(assignExpr->name) == variables.end()) {
-            std::cerr << "Undefined variable '" << assignExpr->name << "'." << std::endl;
+        Evalstr value = evaluateExpr(assignExpr->value.get());
+        try {
+            environment->assign(assignExpr->name, value.value);
+            return value;
+        } catch (const std::runtime_error& e) {
+            std::cerr << e.what() << std::endl;
             exit(70);
         }
-        
-        Evalstr value = evaluateExpr(assignExpr->value.get()); // Evaluate RHS first
-        variables[assignExpr->name] = value; // Assign the value
-    
-        return value; // Return assigned value for chaining
     }
     throw std::runtime_error("Unknown expression.");
 }

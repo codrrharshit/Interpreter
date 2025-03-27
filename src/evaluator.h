@@ -5,7 +5,9 @@
 #include <memory>
 #include <string>
 #include "ast.h"
+#include "environment.h"
 #include <unordered_map>
+#include <iomanip>
 
 struct Evalstr {
     std::string value;
@@ -22,13 +24,13 @@ private:
     void evaluatePrint(PrintStmt* stmt);
     void evaluateBlock(BlockStmt *stmt);
     void evaluateExpression(ExpressionStmt * stmt);
+    std::shared_ptr<Environment> globals;
+    std::shared_ptr<Environment> environment;
 
 public:
-
     Evaluator(bool isEvaluatedMode=false);
-    std::unordered_map<std::string, Evalstr> variables; 
     std::string evaluate(std::unique_ptr<Expr>& expr);
-    void evaluateStmt( const std::unique_ptr<Stmt>& stmt);
+    void evaluateStmt(const std::unique_ptr<Stmt>& stmt);
     void evaluateVariable(VarDeclStmt* stmt);
     void evaluateProgram(const std::unique_ptr<Program>& program);
 };
