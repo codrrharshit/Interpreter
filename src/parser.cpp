@@ -7,6 +7,9 @@ Parser::Parser(const std::vector<Token>& tokens, bool isEvaluateMode)
 bool Parser::isAtEnd() {
     return current >= tokens.size();
 }
+bool Parser::check(TokenType type)  {
+    return !isAtEnd() && peek().type == type;
+}
 
 Token Parser::peek() {
     if (isAtEnd()) return tokens.back();
@@ -67,6 +70,10 @@ std::unique_ptr<Stmt> Parser::parseStatement() {
         return parsePrintStatement();
     }
 
+    if (peek().type==TokenType::LEFT_BRACE) {
+        return parseBlock();  // Call parseBlock() when encountering '{'
+    }
+
     auto expr = parseExpression();
 
     // Handle assignment statements (x = 42;)
@@ -111,6 +118,22 @@ std::unique_ptr<Stmt> Parser::parseVarDeclaration() {
     return std::make_unique<VarDeclStmt>(name.lexeme, std::move(initializer));
 }
 
+std::unique_ptr<Stmt> Parser::parseBlock() {
+    std::vector<std::unique_ptr<Stmt>> statements;
+
+    // Consume the '{' (assuming current token is already '{')
+    consume(TokenType::LEFT_BRACE, "Expect '{' at the beginning of a block.");
+
+    // Keep parsing statements until we hit '}'
+    while (!check(TokenType::RIGHT_BRACE) && !isAtEnd()) {
+        statements.push_back(parseStatement());  // Parse each statement
+    }
+
+    // Consume the '}'
+    consume(TokenType::RIGHT_BRACE, "Expect '}' after block.");
+
+    return std::make_unique<BlockStmt>(std::move(statements));
+}
 // Parse expressions
 std::unique_ptr<Expr> Parser::parseExpression() {
     return parseAssignment();

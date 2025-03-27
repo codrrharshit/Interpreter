@@ -178,6 +178,18 @@ class ExpressionStmt : public Stmt {
             }
         };
 
+        class BlockStmt : public Stmt {
+            public:
+                std::vector<std::unique_ptr<Stmt>> statements;
+            
+                explicit BlockStmt(std::vector<std::unique_ptr<Stmt>> stmts)
+                    : statements(std::move(stmts)) {}
+
+                    std::string toString() const override {
+                        return "BlockStmt";
+                    }
+            };
+
 struct Program {
     std::vector<std::unique_ptr<Stmt>> statements;
 

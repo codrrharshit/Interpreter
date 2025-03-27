@@ -50,6 +50,8 @@ void Evaluator::evaluateStmt( const std::unique_ptr<Stmt>& stmt) {
     else if (auto varStmt = dynamic_cast<VarDeclStmt*>(stmt.get())) {
         evaluateVariable(varStmt);
     }
+    else if (auto blockStmt = dynamic_cast<BlockStmt *>(stmt.get())) {
+        evaluateBlock(blockStmt);}
     else {
         throw std::runtime_error("Unknown statement type.");
     }
@@ -57,6 +59,12 @@ void Evaluator::evaluateStmt( const std::unique_ptr<Stmt>& stmt) {
 void Evaluator::evaluateProgram(const std::unique_ptr<Program>& program) {
     for (const auto& stmt : program->statements) {
         evaluateStmt(stmt);
+    }
+}
+
+void Evaluator::evaluateBlock(BlockStmt *stmt) {
+    for (const auto &statement : stmt->statements) {
+        evaluateStmt(statement);
     }
 }
 

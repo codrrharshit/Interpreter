@@ -20,6 +20,7 @@ private:
     Evalstr evaluateUnary(UnaryExpr* expr);
     bool isNumber(const std::string& str);
     void evaluatePrint(PrintStmt* stmt);
+    void evaluateBlock(BlockStmt *stmt);
     void evaluateExpression(ExpressionStmt * stmt);
 
 public:
