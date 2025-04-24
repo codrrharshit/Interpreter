@@ -1,50 +1,81 @@
-[![progress-banner](https://backend.codecrafters.io/progress/interpreter/55adfe41-e626-418f-9bfc-861400f4c2e7)](https://app.codecrafters.io/users/codecrafters-bot?r=2qF)
+# 🧠 C++ Interpreter
 
-This is a starting point for C++ solutions to the
-["Build your own Interpreter" Challenge](https://app.codecrafters.io/courses/interpreter/overview).
+A simple interpreter built in C++ that supports scanning, parsing, evaluating expressions, handling statements, and managing variable scopes. This project was developed as part of a learning journey into building interpreters and understanding how language processors work under the hood.
 
-This challenge follows the book
-[Crafting Interpreters](https://craftinginterpreters.com/) by Robert Nystrom.
+---
 
-In this challenge you'll build an interpreter for
-[Lox](https://craftinginterpreters.com/the-lox-language.html), a simple
-scripting language. Along the way, you'll learn about tokenization, ASTs,
-tree-walk interpreters and more.
+## 🚀 Features
 
-Before starting this challenge, make sure you've read the "Welcome" part of the
-book that contains these chapters:
+### 1. 🔍 Lexical Analysis (Scanner)
+- Breaks source code into **tokens** (lexemes)
+- Identifies keywords, identifiers, numbers, operators, and punctuation
 
-- [Introduction](https://craftinginterpreters.com/introduction.html) (chapter 1)
-- [A Map of the Territory](https://craftinginterpreters.com/a-map-of-the-territory.html)
-  (chapter 2)
-- [The Lox Language](https://craftinginterpreters.com/the-lox-language.html)
-  (chapter 3)
+### 2. 🧱 Parsing
+- Builds a **syntax tree** from the list of tokens
+- Supports:
+  - Arithmetic expressions (`+`, `-`, `*`, `/`)
+  - Grouping with parentheses
+  - Variable declarations
+  - Assignment statements
 
-These chapters don't involve writing code, so they won't be covered in this
-challenge. This challenge will start from chapter 4,
-[Scanning](https://craftinginterpreters.com/scanning.html).
+### 3. 🧮 Evaluation
+- Walks the parsed tree and **evaluates** expressions
+- Supports:
+  - Integer arithmetic
+  - Variable evaluation
+  - Expression-based assignments
 
-**Note**: If you're viewing this repo on GitHub, head over to
-[codecrafters.io](https://codecrafters.io) to try the challenge.
+### 4. 🧾 Statements
+- Handles:
+  - `let` variable declarations
+  - Expression statements
+  - Print/output statements (if implemented)
 
-# Passing the first stage
+### 5. 🗂️ Scoping
+- Variables are stored and resolved using **scopes**
+- Supports nested scopes and block-level declarations (if blocks are implemented)
 
-The entry point for your program is in `src/main.cpp`. Study and uncomment the
-relevant code, and push your changes to pass the first stage:
+---
+## 📸 Screenshots
 
-```sh
-git commit -am "pass 1st stage" # any msg
-git push origin master
-```
+Below are some screenshots showcasing different stages of the interpreter:
 
-Time to move on to the next stage!
+### 🔹 1. Lexical Analysis
+Displays the tokens generated after scanning the input source code.
 
-# Stage 2 & beyond
+![Lexical Analysis](screenshots/lexical-analysis.png)
 
-Note: This section is for stages 2 and beyond.
+---
 
-1. Ensure you have `cmake` installed locally
-2. Run `./your_program.sh` to run your program, which is implemented in
-   `src/main.cpp`.
-3. Commit your changes and run `git push origin master` to submit your solution
-   to CodeCrafters. Test output will be streamed to your terminal.
+### 🔹 2. Parsing
+Shows the abstract syntax tree (AST) formed from the parsed expressions.
+
+![Syntax Tree](screenshots/syntax-tree.png)
+
+---
+
+### 🔹 3. Evaluation
+Illustrates how the interpreter evaluates expressions and prints results.
+
+![Evaluation](screenshots/evaluation.png)
+
+---
+
+### 🔹 4. Statement Execution and Scoping
+Demonstrates the handling of statements, variable declarations, and nested scopes.
+
+![Statement Scope](screenshots/statement-scope.png)
+
+---
+## 🛠️ Getting Started
+
+### Prerequisites
+- C++17 or higher
+- A compiler like `g++` or `clang++`
+
+### Build & Run
+
+```bash
+g++ -std=c++17 -o interpreter main.cpp
+./interpreter
+
