@@ -23,6 +23,7 @@ private:
     bool isNumber(const std::string& str);
     void evaluatePrint(PrintStmt* stmt);
     void evaluateBlock(BlockStmt *stmt);
+    void evaluateIf(IfStmt* stmt);
     void evaluateExpression(ExpressionStmt * stmt);
     std::shared_ptr<Environment> globals;
     std::shared_ptr<Environment> environment;

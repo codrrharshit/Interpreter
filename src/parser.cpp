@@ -73,6 +73,10 @@ std::unique_ptr<Stmt> Parser::parseStatement() {
     if (peek().type==TokenType::LEFT_BRACE) {
         return parseBlock();  // Call parseBlock() when encountering '{'
     }
+    if(peek().type==TokenType::KEYWORD && peek().lexeme=="if"){
+        match(TokenType::KEYWORD);
+        return parseIfStmt();
+    }
 
     auto expr = parseExpression();
 
@@ -100,6 +104,27 @@ std::unique_ptr<Stmt> Parser::parsePrintStatement() {
     }
     return std::make_unique<PrintStmt>(std::move(expr));
 }
+
+std::unique_ptr<Stmt> Parser::parseIfStmt() {
+    consume(TokenType::LEFT_PAREN, "Expect '(' after 'if'.");
+    auto condition = parseExpression();
+    consume(TokenType::RIGHT_PAREN, "Expect ')' after if condition.");
+
+    auto thenBranch = parseStatement();
+    
+    std::unique_ptr<Stmt> elseBranch = nullptr;
+    if (peek().type==TokenType::KEYWORD && peek().lexeme=="else") {
+        match(TokenType::KEYWORD);
+        elseBranch = parseStatement();
+    }
+
+    return std::make_unique<IfStmt>(
+        std::move(condition),
+        std::move(thenBranch),
+        std::move(elseBranch)
+    );
+}
+
 
 // Parse a variable declaration (`var x = 10;`)
 std::unique_ptr<Stmt> Parser::parseVarDeclaration() {

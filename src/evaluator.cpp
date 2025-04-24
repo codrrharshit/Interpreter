@@ -56,6 +56,10 @@ void Evaluator::evaluateStmt( const std::unique_ptr<Stmt>& stmt) {
     }
     else if (auto blockStmt = dynamic_cast<BlockStmt *>(stmt.get())) {
         evaluateBlock(blockStmt);}
+
+    else if (auto ifStmt = dynamic_cast<IfStmt*>(stmt.get())) {
+            evaluateIf(ifStmt);
+        }
     else {
         throw std::runtime_error("Unknown statement type.");
     }
@@ -63,6 +67,28 @@ void Evaluator::evaluateStmt( const std::unique_ptr<Stmt>& stmt) {
 void Evaluator::evaluateProgram(const std::unique_ptr<Program>& program) {
     for (const auto& stmt : program->statements) {
         evaluateStmt(stmt);
+    }
+}
+
+void Evaluator::evaluateIf(IfStmt* stmt) {
+    Evalstr condition = evaluateExpr(stmt->condition.get());
+    
+    // Convert condition to boolean
+    bool isTruthy = false;
+    if (condition.datatype == "bool") {
+        isTruthy = (condition.value == "true");
+    } else if (condition.datatype == "nil") {
+        isTruthy = false;
+    } else if (condition.datatype == "double") {
+        isTruthy = (std::stod(condition.value) != 0.0);
+    } else { // strings and others
+        isTruthy = true;
+    }
+
+    if (isTruthy) {
+        evaluateStmt(stmt->thenBranch);
+    } else if (stmt->elseBranch != nullptr) {
+        evaluateStmt(stmt->elseBranch);
     }
 }
 

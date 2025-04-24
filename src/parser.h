@@ -26,6 +26,7 @@ private:
     std::unique_ptr<Stmt> parsePrintStatement();
     std::unique_ptr<Stmt> parseVarDeclaration();
     std::unique_ptr<Stmt> parseBlock();
+    std::unique_ptr<Stmt> parseIfStmt();
 
 public:
    Parser(const std::vector<Token>& tokens, bool isEvaluateMode = false);

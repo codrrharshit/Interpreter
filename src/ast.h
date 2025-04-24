@@ -190,6 +190,31 @@ class ExpressionStmt : public Stmt {
                     }
             };
 
+
+            class IfStmt : public Stmt {
+                public:
+                    std::unique_ptr<Expr> condition;
+                    std::unique_ptr<Stmt> thenBranch;
+                    std::unique_ptr<Stmt> elseBranch;  // Can be nullptr
+                    
+                    IfStmt(std::unique_ptr<Expr> condition, 
+                           std::unique_ptr<Stmt> thenBranch,
+                           std::unique_ptr<Stmt> elseBranch = nullptr)
+                        : condition(std::move(condition)),
+                          thenBranch(std::move(thenBranch)),
+                          elseBranch(std::move(elseBranch)) {}
+
+                    
+                    
+                        std::string toString() const override {
+                            std::string result = "if (" + condition->toString() + ") " + thenBranch->toString();
+                            if (elseBranch) {
+                                result += " else " + elseBranch->toString();
+                            }
+                            return result;
+                        }
+                };
+
 struct Program {
     std::vector<std::unique_ptr<Stmt>> statements;
 
