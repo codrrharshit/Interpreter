@@ -43,28 +43,28 @@ Below are some screenshots showcasing different stages of the interpreter:
 ### 🔹 1. Lexical Analysis
 Displays the tokens generated after scanning the input source code.
 
-![Lexical Analysis](screenshots/lexical-analysis.png)
+![Lexical Analysis](./Lexical.png)
 
 ---
 
 ### 🔹 2. Parsing
 Shows the abstract syntax tree (AST) formed from the parsed expressions.
 
-![Syntax Tree](screenshots/syntax-tree.png)
+![Syntax Tree](./Parsing.png)
 
 ---
 
 ### 🔹 3. Evaluation
 Illustrates how the interpreter evaluates expressions and prints results.
 
-![Evaluation](screenshots/evaluation.png)
+![Evaluation](./Arithmetic.png)
 
 ---
 
 ### 🔹 4. Statement Execution and Scoping
 Demonstrates the handling of statements, variable declarations, and nested scopes.
 
-![Statement Scope](screenshots/statement-scope.png)
+![Statement Scope](./Scopes.png)
 
 ---
 ## 🛠️ Getting Started
